@@ -1,0 +1,7 @@
+streamlit
+pandas
+chromadb
+google-genai
+google-cloud-aiplatform
+vertexai
+openpyxl
