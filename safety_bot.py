@@ -10,7 +10,8 @@ from vertexai.preview.language_models import TextEmbeddingModel
 # Falls back to default credentials when running locally
 try:
     credentials = service_account.Credentials.from_service_account_info(
-        st.secrets["gcp_service_account"]
+        st.secrets["gcp_service_account"],
+        scopes=["https://www.googleapis.com/auth/cloud-platform"]
     )
 except (KeyError, FileNotFoundError):
     credentials = None  # Use default credentials locally
