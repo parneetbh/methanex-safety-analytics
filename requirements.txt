@@ -3,5 +3,6 @@ pandas
 chromadb
 google-genai
 google-cloud-aiplatform
+google-auth
 vertexai
 openpyxl

@@ -1,13 +1,25 @@
 # Imports
 import vertexai
 import chromadb
+import streamlit as st
 from google import genai
+from google.oauth2 import service_account
 from vertexai.preview.language_models import TextEmbeddingModel
+
+# Load GCP credentials from Streamlit secrets (for cloud deployment)
+# Falls back to default credentials when running locally
+try:
+    credentials = service_account.Credentials.from_service_account_info(
+        st.secrets["gcp_service_account"]
+    )
+except (KeyError, FileNotFoundError):
+    credentials = None  # Use default credentials locally
 
 # Initialization
 vertexai.init(
     project="methanex-safety",
-    location="us-central1"
+    location="us-central1",
+    credentials=credentials
 )
 
 embedding_model = TextEmbeddingModel.from_pretrained(
