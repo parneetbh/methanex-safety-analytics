@@ -55,7 +55,7 @@ RULES:
 - Keep answers concise and to the point — avoid lengthy quotes from incidents.
 
 RESPONSE FORMAT — Structure your answer with these sections as relevant to the question:
-1. **Direct Answer** — A concise answer to the user's question.
+1. Start directly with a concise answer to the user's question — no heading or label needed.
 2. **Patterns & Recurring Themes** — Common causes, contributing factors, or trends you observe across incidents.
 3. **Severity & Escalation Potential** — What could have happened; which factors are linked to higher severity.
 4. **Prevention Recommendations** — Data-driven suggestions based on the lessons and corrective actions in the incidents.
