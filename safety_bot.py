@@ -29,7 +29,8 @@ embedding_model = TextEmbeddingModel.from_pretrained(
 client = genai.Client(
     vertexai=True,
     project="methanex-safety",
-    location="us-central1"
+    location="us-central1",
+    credentials=credentials
 )
 
 chroma_client = chromadb.PersistentClient(
