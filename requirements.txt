@@ -6,3 +6,9 @@ google-cloud-aiplatform
 google-auth
 vertexai
 openpyxl
+plotly
+scikit-learn
+matplotlib
+wordcloud
+numpy
+google-cloud-bigquery

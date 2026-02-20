@@ -6,15 +6,20 @@ from google import genai
 from google.oauth2 import service_account
 from vertexai.preview.language_models import TextEmbeddingModel
 
-# Load GCP credentials from Streamlit secrets (for cloud deployment)
-# Falls back to default credentials when running locally
+# Load GCP credentials
+# On Cloud Run: uses Application Default Credentials (automatic)
+# Locally with st.secrets: uses service account key from secrets.toml
+# Locally without secrets: uses gcloud auth application-default credentials
 try:
     credentials = service_account.Credentials.from_service_account_info(
         st.secrets["gcp_service_account"],
         scopes=["https://www.googleapis.com/auth/cloud-platform"]
     )
-except (KeyError, FileNotFoundError):
-    credentials = None  # Use default credentials locally
+except (KeyError, FileNotFoundError, Exception):
+    import google.auth
+    credentials, _ = google.auth.default(
+        scopes=["https://www.googleapis.com/auth/cloud-platform"]
+    )
 
 # Initialization
 vertexai.init(
@@ -48,6 +53,8 @@ You analyze historical safety incidents, near misses, and lessons learned to hel
 patterns, understand severity drivers, and recommend prevention strategies.
 
 RULES:
+- If the user sends a greeting (e.g. "hi", "hello", "hey") or a general conversational message that is NOT a safety-related question, respond in a friendly, conversational way. Introduce yourself briefly as Methanex's AI safety assistant and let them know what you can help with. Do NOT analyze incidents for greetings.
+- If the user asks a question unrelated to safety incidents, politely let them know your expertise is in safety incident analysis and suggest they ask a safety-related question.
 - Answer ONLY using the incident records provided below. Do not add external safety advice or assumptions.
 - If the incidents do not contain enough information to answer, say so clearly.
 - Do NOT reference specific incident numbers in your answer (e.g. "Incident 5"). Instead, describe incidents by their type, location, or key details.
@@ -60,9 +67,11 @@ RESPONSE FORMAT — Structure your answer with these sections as relevant to the
 3. **Severity & Escalation Potential** — What could have happened; which factors are linked to higher severity.
 4. **Prevention Recommendations** — Data-driven suggestions based on the lessons and corrective actions in the incidents.
 
-At the very end of your response, always add this exact line on its own:
+At the very end of your response, if and only if you analyzed incident records to answer the question, add this exact line on its own:
 
 **Would you like to take a closer look at the related incidents?**
+
+Do NOT add this line for greetings, general conversation, or off-topic questions.
 
 Keep your response clear, actionable, and grounded in the data provided."""
 
