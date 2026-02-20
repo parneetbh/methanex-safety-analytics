@@ -1,6 +1,5 @@
 import streamlit as st
 import sys
-import base64
 from pathlib import Path
 
 # Add parent directory to path for safety_bot import
@@ -13,15 +12,12 @@ st.markdown("""
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 
-    /* Header */
     .page-header {
-        display: flex; align-items: center; gap: 16px;
-        padding: 0 0 20px 0; border-bottom: 1px solid #eaedf2; margin-bottom: 24px;
+        padding: 0 0 20px 0;
+        border-bottom: 1px solid #eaedf2; margin-bottom: 24px;
     }
-    .page-header img { height: 40px; }
     .page-header .title { font-size: 1.4rem; font-weight: 700; color: #1a202c; margin: 0; }
     .page-header .subtitle { font-size: 0.85rem; color: #718096; margin: 0; }
-    .divider { color: #cbd5e0; font-size: 1.4rem; font-weight: 300; }
 
     /* Welcome message */
     .welcome-msg {
@@ -53,28 +49,14 @@ st.markdown("""
     }
 
     .footer-bar {
-        text-align: center; color: #a0aec0; font-size: 0.8rem;
-        padding: 20px 0 5px 0; border-top: 1px solid #eaedf2; margin-top: 30px;
+        text-align: center; color: #a0aec0; font-size: 0.75rem;
+        padding: 8px 0 0 0; margin-top: 8px;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# ─── Logo ───
-def get_logo_base64():
-    logo_path = Path(__file__).parent.parent / "logo.png"
-    if not logo_path.exists():
-        logo_path = Path(__file__).parent / "logo.png"
-    if logo_path.exists():
-        return base64.b64encode(logo_path.read_bytes()).decode()
-    return None
-
-logo_b64 = get_logo_base64()
-logo_img = f'<img src="data:image/png;base64,{logo_b64}" alt="Methanex">' if logo_b64 else ""
-
-st.markdown(f"""
+st.markdown("""
 <div class="page-header">
-    {logo_img}
-    <span class="divider">|</span>
     <div>
         <p class="title">SafeBot AI Assistant</p>
         <p class="subtitle">AI-powered safety incident analysis</p>
@@ -142,4 +124,4 @@ if "pending_query" in st.session_state:
     st.session_state.messages.append({"role": "assistant", "content": answer})
     st.rerun()
 
-st.markdown('<div class="footer-bar">Methanex Safety Analytics • Powered by Gemini AI & ChromaDB</div>', unsafe_allow_html=True)
+
