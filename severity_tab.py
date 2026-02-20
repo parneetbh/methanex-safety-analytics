@@ -35,6 +35,7 @@ import os
 
 # ─── Configuration (do NOT change these) ─────────────────────────
 CREDENTIALS_FILE = "credentials.json"
+PROJECT_ID = "pure-loop-487819-j9"  # fallback when no credentials file
 LOCATION = "us-central1"
 DATASET = "safety_data"
 MODEL_NAME = f"{DATASET}.severity_scorer_v2"
@@ -42,12 +43,27 @@ EMBEDDINGS_TABLE = f"{DATASET}.report_embeddings_v2"
 
 
 def _get_clients():
-    """Initialize GCP clients. Returns (bq_client, embedding_model, project_id)."""
-    creds = service_account.Credentials.from_service_account_file(CREDENTIALS_FILE)
-    pid = creds.project_id
-    vertexai.init(project=pid, location=LOCATION, credentials=creds)
-    emb_model = TextEmbeddingModel.from_pretrained("text-embedding-004")
-    bq = bigquery.Client(credentials=creds, project=pid)
+    """
+    Initialize GCP clients. Returns (bq_client, embedding_model, project_id).
+    
+    - LOCAL: Uses credentials.json file
+    - CLOUD RUN: Uses Application Default Credentials (no file needed)
+    """
+    if os.path.exists(CREDENTIALS_FILE):
+        # Local development — use the service account key file
+        creds = service_account.Credentials.from_service_account_file(CREDENTIALS_FILE)
+        pid = creds.project_id
+        vertexai.init(project=pid, location=LOCATION, credentials=creds)
+        emb_model = TextEmbeddingModel.from_pretrained("text-embedding-004")
+        bq = bigquery.Client(credentials=creds, project=pid)
+    else:
+        # Cloud Run / deployed — use Application Default Credentials
+        import google.auth
+        creds, pid = google.auth.default()
+        pid = pid or PROJECT_ID
+        vertexai.init(project=pid, location=LOCATION)
+        emb_model = TextEmbeddingModel.from_pretrained("text-embedding-004")
+        bq = bigquery.Client(project=pid)
     return bq, emb_model, pid
 
 
